@@ -12,11 +12,17 @@ class Producto {
     private String nombre;
     private float val;
     private TIPO_DIVISA t;
+    private int id;
 
-    public Producto(String nombre, float val, TIPO_DIVISA t) {
+    public Producto(String nombre, float val, TIPO_DIVISA t, int id) {
         this.nombre = nombre;
         this.val = val;
         this.t = t;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNombre() {

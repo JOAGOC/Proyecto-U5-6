@@ -1,5 +1,8 @@
 
+import javax.swing.JLabel;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -7,23 +10,23 @@ import javax.swing.table.DefaultTableModel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Angel
  */
 public class Ventana extends javax.swing.JFrame {
 
-    private Producto[] P = new Producto[100];
-    private int tope = 0,id = 1;
+    private ArrayProducto A;
+    private int id = 1;
     DefaultTableModel m;
-    
+
     /**
      * Creates new form Ventana
      */
     public Ventana() {
         initComponents();
         m = (DefaultTableModel) tblProducto.getModel();
+        A = new ArrayProducto(100);
     }
 
     /**
@@ -45,8 +48,16 @@ public class Ventana extends javax.swing.JFrame {
         btnAgregarProducto = new javax.swing.JButton();
         jspTabla = new javax.swing.JScrollPane();
         tblProducto = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        lblBusqueda = new javax.swing.JLabel();
+        jtfBusqueda = new javax.swing.JTextField();
+        btnBusqueda = new javax.swing.JButton();
+        btnBorrar = new javax.swing.JButton();
+        btnOrdenarID = new javax.swing.JButton();
+        btnOrdenarValor = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1020, 459));
         setPreferredSize(new java.awt.Dimension(581, 459));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -59,8 +70,8 @@ public class Ventana extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(lblNombreP, gridBagConstraints);
 
-        jtfNombreP.setMinimumSize(new java.awt.Dimension(60, 20));
-        jtfNombreP.setPreferredSize(new java.awt.Dimension(90, 20));
+        jtfNombreP.setMinimumSize(new java.awt.Dimension(70, 20));
+        jtfNombreP.setPreferredSize(jtfNombreP.getMinimumSize());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(jtfNombreP, gridBagConstraints);
@@ -107,6 +118,12 @@ public class Ventana extends javax.swing.JFrame {
                 "Nombre del producto", "Valor", "ID"
             }
         ));
+        tblProducto.setColumnSelectionAllowed(false);
+        tblProducto.setEnabled(false);
+        tblProducto.setSelectionBackground(new java.awt.Color(255, 255, 153));
+        tblProducto.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        tblProducto.setShowGrid(false);
+        tblProducto.getTableHeader().setReorderingAllowed(false);
         jspTabla.setViewportView(tblProducto);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -117,43 +134,138 @@ public class Ventana extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(20, 20, 20, 20);
         getContentPane().add(jspTabla, gridBagConstraints);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Buscar Producto"));
+        jPanel2.setMinimumSize(new java.awt.Dimension(353, 70));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        lblBusqueda.setText("ID:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(lblBusqueda, gridBagConstraints);
+
+        jtfBusqueda.setMinimumSize(new java.awt.Dimension(70, 20));
+        jtfBusqueda.setPreferredSize(jtfNombreP.getMinimumSize());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(jtfBusqueda, gridBagConstraints);
+
+        btnBusqueda.setText("Buscar");
+        btnBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBusquedaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnBusqueda, gridBagConstraints);
+
+        btnBorrar.setText("Borrar");
+        btnBorrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnBorrar, gridBagConstraints);
+
+        btnOrdenarID.setText("Ordenar por ID");
+        btnOrdenarID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrdenarIDActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnOrdenarID, gridBagConstraints);
+
+        btnOrdenarValor.setText("Ordenar por valor");
+        btnOrdenarValor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrdenarValorActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnOrdenarValor, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 20, 20);
+        getContentPane().add(jPanel2, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reordenamelapinchetabla() {
+        m.setRowCount(0);
+        for (int i = 0; i < A.getTope(); i++) {
+            Producto p = A.getP()[i];
+            m.addRow(new Object[]{p.getNombre(), p.getValS(), p.getId()});
+        }
+    }
+
     private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
         try {
-            if (jtfNombreP.getText().equals("") || (float)(spnValor.getValue()) == 0)
+            if (jtfNombreP.getText().equals("") || (float) (spnValor.getValue()) == 0) {
                 throw new Exception("Completa los valores del producto antes de insertar");
-            TIPO_DIVISA t = null;
-            switch (cmbDivisa.getSelectedIndex()) {
-
-                case 0:
-                    t = TIPO_DIVISA.Peso;
-                    break;
-                case 1:
-                    t = TIPO_DIVISA.Dolar;
-                    break;
-                case 2:
-                    t = TIPO_DIVISA.Euro;
-                    break;
-                case 3:
-                    t = TIPO_DIVISA.LibraEsterlina;
-                    break;
-                case 4:
-                    t = TIPO_DIVISA.YenJaponés;
-                    break;
-                case 5:
-                    t = TIPO_DIVISA.FrancoSuizo;
-                    break;
-                default:
             }
-            Producto p = new Producto(jtfNombreP.getText(), (float)(spnValor.getValue()),t);
-            P[tope++] = p;
-            m.addRow(new Object[]{p.getNombre(),p.getValS(),id++});
+            TIPO_DIVISA[] td = {TIPO_DIVISA.Peso, TIPO_DIVISA.Dolar, TIPO_DIVISA.Euro, TIPO_DIVISA.LibraEsterlina, TIPO_DIVISA.YenJaponés, TIPO_DIVISA.FrancoSuizo};
+            Producto p = new Producto(jtfNombreP.getText(), (float) (spnValor.getValue()), td[cmbDivisa.getSelectedIndex()], id++);
+            A.add(p);
+            m.addRow(new Object[]{p.getNombre(), p.getValS(), p.getId()});
         } catch (Exception e) {
-            showMessageDialog(null,e.getMessage());
+            showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_btnAgregarProductoActionPerformed
+
+    private void btnBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBusquedaActionPerformed
+        try {
+            int x = Integer.parseInt(jtfBusqueda.getText());
+            if (x < 1 || (x = A.busquedaBinaria(x)) == -1) {
+                throw new Exception("No se encontró el producto");
+            }
+            reordenamelapinchetabla();
+            tblProducto.setRowSelectionInterval(x, x);
+        } catch (Exception e) {
+            if (e instanceof NumberFormatException) {
+                showMessageDialog(null, "Inserta un id válido");
+            } else {
+                showMessageDialog(null, e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnBusquedaActionPerformed
+
+    private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
+        int x = tblProducto.getSelectedRow();
+        if (x != -1)
+            A.delete(x);
+        reordenamelapinchetabla();
+    }//GEN-LAST:event_btnBorrarActionPerformed
+
+    private void btnOrdenarIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarIDActionPerformed
+        A.quickSort(true);
+        reordenamelapinchetabla();
+    }//GEN-LAST:event_btnOrdenarIDActionPerformed
+
+    private void btnOrdenarValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarValorActionPerformed
+        A.quickSort(false);
+        reordenamelapinchetabla();
+    }//GEN-LAST:event_btnOrdenarValorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,10 +304,17 @@ public class Ventana extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarProducto;
+    private javax.swing.JButton btnBorrar;
+    private javax.swing.JButton btnBusqueda;
+    private javax.swing.JButton btnOrdenarID;
+    private javax.swing.JButton btnOrdenarValor;
     private javax.swing.JComboBox<String> cmbDivisa;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jspTabla;
+    private javax.swing.JTextField jtfBusqueda;
     private javax.swing.JTextField jtfNombreP;
+    private javax.swing.JLabel lblBusqueda;
     private javax.swing.JLabel lblNombreP;
     private javax.swing.JLabel lblValorP;
     private javax.swing.JSpinner spnValor;
